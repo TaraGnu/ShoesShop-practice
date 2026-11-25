@@ -54,8 +54,11 @@
                 <TextBlock Grid.Row="2"
                            FontSize="12"
                            Foreground="{StaticResource TextSecondaryBrush}"
-                           Text="{Binding CategoryName}"
-                           Margin="0,0,0,3"/>
+                           Margin="0,0,0,3">
+                                <Run Text="{Binding CategoryName, Mode=OneWay}"/>
+                                <Run Text=" / "/>
+                                <Run Text="{Binding SubcategoryName, Mode=OneWay}"/>
+                </TextBlock>
 
                 <TextBlock Grid.Row="3"
                            FontSize="12"

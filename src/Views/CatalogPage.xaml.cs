@@ -1,21 +1,8 @@
-﻿using ShoesShop.Models;
-using ShoesShop.Service;
+﻿using ShoesShop.Service;
 using ShoesShop.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using ShoesShop.Views.Controls;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ShoesShop.Views
 {
@@ -24,15 +11,24 @@ namespace ShoesShop.Views
     /// </summary>
     public partial class CatalogPage : Page
     {
-        public ObservableCollection<ShoeCardViewModel> Cards { get; } = new();
-        public CatalogPage()
+        private readonly UserSession _session;
+
+        public CatalogPage(UserSession session)
         {
-            foreach (var card in CatalogService.GetCatalog())
-            {
-                Cards.Add(card);
-            }
-            DataContext = Cards;
             InitializeComponent();
+            _session = session;
+            DataContext = new CatalogViewModel(_session);
+            TopBar.Session = session;
+        }
+
+        private void TopBar_LoginRequested(object sender, EventArgs e) => TopBarNavigation.HandleLogin(this, _session);
+
+        private void TopBar_LogoutRequested(object sender, EventArgs e) => TopBarNavigation.HandleLogout(this, _session);
+
+        private void Card_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is ShoeCardControl { DataContext: ShoeCardViewModel card })
+                NavigationService.Navigate(new ProductPage(card, _session));
         }
     }
 }

@@ -1,23 +1,23 @@
-﻿using System.Text;
+﻿using ShoesShop.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ShoesShop.Views;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
 public partial class MainWindow : Window
 {
+    private readonly UserSession _session  = new();
+
     public MainWindow()
     {
         InitializeComponent();
+        MainFrame.Navigated += (_, e) =>
+        {
+            if (e.Content is Page page)
+                Title = $"{page.Title} — Магазин обуви";
+        };
+
+        MainFrame.Navigate(new CatalogPage(_session));
     }
+
 }

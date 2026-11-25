@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ShoesShop.Models;
+﻿namespace ShoesShop.Models;
 
 public partial class User
 {
@@ -20,4 +17,10 @@ public partial class User
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public virtual Role Role { get; set; } = null!;
+
+    public override string ToString()
+    {
+        return string.Join(" ", new[] { Surname, Name, Fathername }
+                    .Where(p => !string.IsNullOrWhiteSpace(p)));
+    }
 }

@@ -1,7 +1,7 @@
 ﻿<Page x:Class="ShoesShop.Views.CatalogPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:product="clr-namespace:ShoesShop.Views.Controls"
+      xmlns:controls="clr-namespace:ShoesShop.Views.Controls"
       Title="Каталог обуви"
       FontFamily="Calibri"
       Background="{StaticResource PrimaryBackgroundBrush}">
@@ -9,28 +9,54 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0"
-                Background="{StaticResource SecondaryBackgroundBrush}"
-                Padding="16">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <Image Source="/Images/Shoes.png"
-                       Height="42" Margin="0,0,16,0" Stretch="Uniform"/>
-                <TextBlock Text="Каталог обуви"
-                           FontSize="24" FontWeight="SemiBold"
-                           VerticalAlignment="Center"/>
-            </StackPanel>
+        <controls:TopBarControl Grid.Row="0"
+                        x:Name="TopBar"
+                        Title="Каталог обуви"
+                        LoginRequested="TopBar_LoginRequested"
+                        LogoutRequested="TopBar_LogoutRequested"/>
+
+        <Border Grid.Row="1" Padding="16,12">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsAuthorized}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition Width="220"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         FontSize="14" Padding="8"
+                         ToolTip="Поиск по наименованию и описанию"/>
+
+                <ComboBox Grid.Column="1" Margin="12,0,0,0" Padding="6"
+                          ItemsSource="{Binding Categories}"
+                          SelectedItem="{Binding SelectedCategory}"/>
+
+                <ComboBox Grid.Column="2" Margin="12,0,0,0" Padding="6"
+                          ItemsSource="{Binding SortOptions}"
+                          SelectedItem="{Binding SelectedSort}"/>
+            </Grid>
         </Border>
 
-        <ScrollViewer Grid.Row="1"
-                      Padding="16"
-                      VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding}">
+        <ScrollViewer Grid.Row="2" Padding="16,0,16,16" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Cards}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <product:ShoeCardControl/>
+                        <controls:ShoeCardControl MouseLeftButtonUp="Card_MouseLeftButtonUp"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

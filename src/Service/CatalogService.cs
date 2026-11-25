@@ -1,7 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using ShoesShop.Models;
 using ShoesShop.ViewModels;
 
@@ -9,12 +6,11 @@ namespace ShoesShop.Service
 {
     public static class CatalogService
     {
-        public static List<ShoeCardViewModel> GetCatalog()
+        public static List<ShoeCardViewModel> GetCatalog(DateTime calculationDate)
         {
-            using var dbcontext = new ShoesContext();
-            var productIdsWithOrders = GetProductIdsWithOrdersInPreviousMonth(dbcontext);
-            var products = LoadProducts(dbcontext);
-
+            using var context = new ShoesContext();
+            var productIdsWithOrders = GetProductIdsWithOrdersInPreviousMonth(context, calculationDate);
+            var products = LoadProducts(context);
             return BuildCards(products, productIdsWithOrders);
         }
 
@@ -23,21 +19,21 @@ namespace ShoesShop.Service
             return context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Production)
-                .Include(p => p.Warehouses)
+                .Include(p => p.Subcategory)
+                .Include(p => p.Warehouses).ThenInclude(w => w.Size)
                 .ToList();
         }
 
-        private static List<ShoeCardViewModel> BuildCards(
-            IEnumerable<Product> products,
-            HashSet<int> productIdsWithOrders)
+        private static List<ShoeCardViewModel> BuildCards(IEnumerable<Product> products,HashSet<int> productIdsWithOrders)
         {
             return products
                 .Select(p => new ShoeCardViewModel(p, productIdsWithOrders.Contains(p.Id)))
                 .ToList();
         }
-        private static HashSet<int> GetProductIdsWithOrdersInPreviousMonth(ShoesContext context)
+
+        private static HashSet<int> GetProductIdsWithOrdersInPreviousMonth(ShoesContext context, DateTime calculationDate)
         {
-            var currentMonthStart = DateTime.Now;
+            var currentMonthStart = new DateTime(calculationDate.Year, calculationDate.Month, 1);
             var previousMonthStart = currentMonthStart.AddMonths(-1);
 
             return context.OrdersItems
