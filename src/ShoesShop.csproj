@@ -19,9 +19,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-	  <Content Include="Images\**\*.png" Exclude="Images\Shoes.png">
+	  <Content Include="Images\**\*.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
+	  <Resource Include="ShoesIco.ico" />
   </ItemGroup>
+	
 	
 </Project>
