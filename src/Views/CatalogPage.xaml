@@ -17,7 +17,8 @@
                         x:Name="TopBar"
                         Title="Каталог обуви"
                         LoginRequested="TopBar_LoginRequested"
-                        LogoutRequested="TopBar_LogoutRequested"/>
+                        LogoutRequested="TopBar_LogoutRequested"
+                        OrdersRequested="TopBar_OrdersRequested"/>
 
         <Border Grid.Row="1" Padding="16,12">
             <Border.Style>

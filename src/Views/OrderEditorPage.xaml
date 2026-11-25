@@ -1,0 +1,200 @@
+﻿<Page x:Class="ShoesShop.Views.OrderEditorPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="clr-namespace:ShoesShop.Views.Controls"
+      Title="Заказ"
+      FontFamily="Calibri"
+      Background="{StaticResource PrimaryBackgroundBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <controls:TopBarControl Grid.Row="0"
+                                x:Name="TopBar"
+                                Title="Заказ"
+                                LoginRequested="TopBar_LoginRequested"
+                                LogoutRequested="TopBar_LogoutRequested"
+                                OrdersRequested="TopBar_OrdersRequested"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="16">
+            <Button Content="← Назад"
+                    Click="Back_Click"
+                    Background="{StaticResource AccentBrush}"
+                    Foreground="White"
+                    BorderThickness="0"
+                    Padding="14,8"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="2" Padding="16" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="{Binding HeaderText}"
+                           FontSize="22" FontWeight="Bold"
+                           Margin="0,0,0,12"/>
+
+                <!-- ===== Создание нового заказа ===== -->
+                <Border Style="{StaticResource ProductCardBorder}"
+                        Padding="20"
+                        Visibility="{Binding IsNewOrder, Converter={StaticResource BoolToVisibility}}">
+                    <StackPanel>
+                        <TextBlock Text="Клиент" FontSize="13" Margin="0,0,0,4"/>
+                        <ComboBox ItemsSource="{Binding Clients}"
+                                  SelectedItem="{Binding SelectedClient}"
+                                  DisplayMemberPath="."
+                                  Height="34" Padding="6"
+                                  Margin="0,0,0,12"/>
+
+                        <TextBlock Text="Дата заказа" FontSize="13" Margin="0,0,0,4"/>
+                        <DatePicker SelectedDate="{Binding OrderDate}"
+                                    Height="34" Margin="0,0,0,12"/>
+
+                        <Button Content="Создать заказ"
+                                Command="{Binding CreateOrderCommand}"
+                                Background="{StaticResource AccentBrush}"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Padding="18,8"
+                                HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- ===== Существующий заказ ===== -->
+                <StackPanel Visibility="{Binding IsExistingOrder, Converter={StaticResource BoolToVisibility}}">
+
+                    <!-- Шапка заказа -->
+                    <Border Style="{StaticResource ProductCardBorder}" Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="{Binding SelectedClient}"
+                                       FontSize="16" FontWeight="SemiBold"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <TextBlock Text="Дата: " VerticalAlignment="Center"/>
+                                <DatePicker SelectedDate="{Binding OrderDate}"
+                                            IsEnabled="{Binding IsAdmin}"
+                                            Width="180"/>
+                                <Button Content="Сохранить дату"
+                                        Command="{Binding SaveDateCommand}"
+                                        Visibility="{Binding ShowDateEditor, Converter={StaticResource BoolToVisibility}}"
+                                        Margin="10,0,0,0"
+                                        Padding="12,4"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Состав заказа -->
+                    <Border Style="{StaticResource ProductCardBorder}"
+                            Padding="20" Margin="0,16,0,0">
+                        <StackPanel>
+                            <TextBlock Text="Состав заказа"
+                                       FontSize="18" FontWeight="SemiBold"
+                                       Margin="0,0,0,12"/>
+
+                            <DataGrid ItemsSource="{Binding Items}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      RowHeaderWidth="0"
+                                      MaxHeight="320"
+                                      AlternatingRowBackground="{StaticResource SecondaryBackgroundBrush}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Товар"
+                                                        Binding="{Binding Display}"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="Кол-во"
+                                                        Binding="{Binding Quantity}"
+                                                        Width="80"/>
+                                    <DataGridTextColumn Header="Цена за ед."
+                                                        Binding="{Binding UnitPrice, StringFormat='{}{0:N0} ₽'}"
+                                                        Width="120"/>
+                                    <DataGridTextColumn Header="Сумма"
+                                                        Binding="{Binding TotalPrice, StringFormat='{}{0:N0} ₽'}"
+                                                        Width="130"/>
+                                    <DataGridTemplateColumn Width="100">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="Удалить"
+                                                        Command="{Binding DataContext.RemoveItemCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                        CommandParameter="{Binding}"
+                                                        Visibility="{Binding DataContext.ShowDeleteButton, RelativeSource={RelativeSource AncestorType=Page}, Converter={StaticResource BoolToVisibility}}"
+                                                        Background="Transparent"
+                                                        Foreground="#C0392B"
+                                                        BorderThickness="0"
+                                                        Padding="8,2"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <TextBlock Text="{Binding TotalPrice, StringFormat='Итого: {0:N0} ₽'}"
+                                       FontSize="20" FontWeight="Bold"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       HorizontalAlignment="Right"
+                                       Margin="0,12,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Добавление товара (менеджер и админ) -->
+                    <Border Style="{StaticResource ProductCardBorder}"
+                            Padding="20" Margin="0,16,0,0"
+                            Visibility="{Binding ShowAddPanel, Converter={StaticResource BoolToVisibility}}">
+                        <StackPanel>
+                            <TextBlock Text="Добавить товар в заказ"
+                                       FontSize="18" FontWeight="SemiBold"
+                                       Margin="0,0,0,12"/>
+
+                            <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="Поиск по наименованию модели"
+                                     Padding="8" Height="34"
+                                     Margin="0,0,0,10"/>
+
+                            <ListBox ItemsSource="{Binding Products}"
+                                     SelectedItem="{Binding SelectedProduct}"
+                                     Height="200"
+                                     Margin="0,0,0,12">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding ProductionAndName}"
+                                                       FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding PriceWithDiscount, StringFormat=' — {0:N0} ₽'}"
+                                                       Foreground="{StaticResource AccentBrush}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel Width="280">
+                                    <TextBlock Text="Размер" FontSize="13" Margin="0,0,0,4"/>
+                                    <ComboBox ItemsSource="{Binding AvailableSizesForProduct}"
+                                              SelectedItem="{Binding SelectedSize}"
+                                              DisplayMemberPath="Display"
+                                              Height="34" Padding="6"/>
+                                </StackPanel>
+
+                                <StackPanel Width="140" Margin="16,0,0,0">
+                                    <TextBlock Text="Количество" FontSize="13" Margin="0,0,0,4"/>
+                                    <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}"
+                                             PreviewTextInput="Quantity_PreviewTextInput"
+                                             Height="34" Padding="6"/>
+                                </StackPanel>
+
+                                <Button Content="Добавить в заказ"
+                                        Command="{Binding AddItemCommand}"
+                                        Background="{StaticResource AccentBrush}"
+                                        Foreground="White"
+                                        BorderThickness="0"
+                                        Padding="18,8"
+                                        Height="34"
+                                        VerticalAlignment="Bottom"
+                                        Margin="16,0,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

@@ -17,7 +17,8 @@
                  x:Name="TopBar"
                  Title="Просмотр товара"
                  LoginRequested="TopBar_LoginRequested"
-                 LogoutRequested="TopBar_LogoutRequested"/>
+                 LogoutRequested="TopBar_LogoutRequested"
+                 OrdersRequested="TopBar_OrdersRequested"/>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="16,12,16,0">
             <Button Content="← Назад" Click="Back_Click"
