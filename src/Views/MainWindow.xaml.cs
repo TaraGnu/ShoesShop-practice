@@ -7,7 +7,7 @@ namespace ShoesShop.Views;
 
 public partial class MainWindow : Window
 {
-    private readonly UserSession _session  = new();
+    private readonly UserSession _session = new();
 
     public MainWindow()
     {
@@ -18,7 +18,7 @@ public partial class MainWindow : Window
                 Title = $"{page.Title} — Магазин обуви";
         };
         this.Icon = new BitmapImage(new Uri("pack://application:,,,/ShoesIco.ico", UriKind.Absolute));
-        MainFrame.Navigate(new CatalogPage(_session));
+        MainFrame.Navigate(new LoginPage(_session));
     }
 
 }

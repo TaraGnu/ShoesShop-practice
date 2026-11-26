@@ -20,7 +20,7 @@
             <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
         </Style>
 
-        <Style x:Key="ProductCardBorder" TargetType="Border">
+        <Style x:Key="ProductItemBorder" TargetType="Border">
             <Setter Property="Background"      Value="{StaticResource PrimaryBackgroundBrush}"/>
             <Setter Property="BorderBrush"     Value="{StaticResource BorderBrushLight}"/>
             <Setter Property="BorderThickness" Value="1"/>
@@ -33,6 +33,15 @@
                     <Setter Property="Background" Value="{StaticResource LowStockBrush}"/>
                 </DataTrigger>
             </Style.Triggers>
+        </Style>
+        
+        <Style x:Key="ProductCardBorder" TargetType="Border">
+            <Setter Property="Background"      Value="{StaticResource PrimaryBackgroundBrush}"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderBrushLight}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius"    Value="6"/>
+            <Setter Property="Padding"         Value="12"/>
+            <Setter Property="Margin"          Value="0,0,0,10"/>
         </Style>
     </Application.Resources>
 </Application>

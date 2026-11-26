@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ShoesShop.Commands;
 using ShoesShop.Models;
-using ShoesShop.Views;
 
 namespace ShoesShop.ViewModels
 {

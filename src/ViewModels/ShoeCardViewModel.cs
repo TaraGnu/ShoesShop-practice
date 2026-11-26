@@ -41,10 +41,12 @@ namespace ShoesShop.ViewModels
 
         public int TotalQuantity { get; }
         public string QuantityText => TotalQuantity > 5 ? "много" : "мало";
-        public float BasePrice { get 
+        public float BasePrice
+        {
+            get
             {
                 return _product.Price;
-            } 
+            }
         }
         public float PriceWithDiscount { get; }
         public bool HasDiscount => BasePrice != PriceWithDiscount;

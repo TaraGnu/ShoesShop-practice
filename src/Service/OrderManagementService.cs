@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ShoesShop.Models;
 using ShoesShop.ViewModels;
-using System.Linq;
 
 namespace ShoesShop.Service
 {
@@ -26,7 +25,12 @@ namespace ShoesShop.Service
         {
             using var context = new ShoesContext();
             return context.Users
-                .Where(u => u.RoleId == (int)UserRole.Client)
+                .Include(u => u.Role)
+                .Where(u => u.Role.Name != "Manager"
+                         && u.Role.Name != "Менеджер"
+                         && u.Role.Name != "Admin"
+                         && u.Role.Name != "Administrator"
+                         && u.Role.Name != "Администратор")
                 .OrderBy(u => u.Surname)
                 .ToList();
         }

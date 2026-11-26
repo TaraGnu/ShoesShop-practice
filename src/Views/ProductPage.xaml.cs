@@ -30,6 +30,7 @@ namespace ShoesShop.Views
 
         private void TopBar_LogoutRequested(object sender, EventArgs e) => TopBarNavigation.HandleLogout(this, _session);
         private void TopBar_OrdersRequested(object sender, EventArgs e) => NavigationService.Navigate(new OrdersPage(_session));
+        private void TopBar_CatalogRequested(object sender, EventArgs e) => NavigationService.Navigate(new CatalogPage(_session));
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {

@@ -22,7 +22,6 @@ namespace ShoesShop.Views
         }
 
         private void TopBar_LoginRequested(object sender, EventArgs e) => TopBarNavigation.HandleLogin(this, _session);
-
         private void TopBar_LogoutRequested(object sender, EventArgs e) => TopBarNavigation.HandleLogout(this, _session);
         private void TopBar_OrdersRequested(object sender, EventArgs e) => NavigationService.Navigate(new OrdersPage(_session));
 

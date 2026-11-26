@@ -18,7 +18,8 @@
                                 Title="Заказ"
                                 LoginRequested="TopBar_LoginRequested"
                                 LogoutRequested="TopBar_LogoutRequested"
-                                OrdersRequested="TopBar_OrdersRequested"/>
+                                OrdersRequested="TopBar_OrdersRequested"
+                                CatalogRequested="TopBar_CatalogRequested"/>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="16">
             <Button Content="← Назад"
@@ -35,7 +36,6 @@
                            FontSize="22" FontWeight="Bold"
                            Margin="0,0,0,12"/>
 
-                <!-- ===== Создание нового заказа ===== -->
                 <Border Style="{StaticResource ProductCardBorder}"
                         Padding="20"
                         Visibility="{Binding IsNewOrder, Converter={StaticResource BoolToVisibility}}">
@@ -43,13 +43,30 @@
                         <TextBlock Text="Клиент" FontSize="13" Margin="0,0,0,4"/>
                         <ComboBox ItemsSource="{Binding Clients}"
                                   SelectedItem="{Binding SelectedClient}"
-                                  DisplayMemberPath="."
                                   Height="34" Padding="6"
                                   Margin="0,0,0,12"/>
 
-                        <TextBlock Text="Дата заказа" FontSize="13" Margin="0,0,0,4"/>
-                        <DatePicker SelectedDate="{Binding OrderDate}"
-                                    Height="34" Margin="0,0,0,12"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <TextBlock Text="Дата: " VerticalAlignment="Center"/>
+
+                            <DatePicker SelectedDate="{Binding OrderDate}"
+                                        DisplayDateStart="{Binding MinOrderDate, Mode=OneWay}"
+                                        DisplayDateEnd="{Binding MaxOrderDate, Mode=OneWay}"
+                                        Width="180"
+                                        Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibility}}"/>
+
+                            <TextBlock Text="{Binding OrderDate, StringFormat='dd.MM.yyyy'}"
+                                    FontSize="14" FontWeight="SemiBold"
+                                    VerticalAlignment="Center"
+                                    MinWidth="180"
+                                    Visibility="{Binding IsManager, Converter={StaticResource BoolToVisibility}}"/>
+
+                            <Button Content="Сохранить дату"
+                                    Command="{Binding SaveDateCommand}"
+                                    Visibility="{Binding ShowDateEditor, Converter={StaticResource BoolToVisibility}}"
+                                    Margin="10,0,0,0"
+                                    Padding="12,4"/>
+                        </StackPanel>
 
                         <Button Content="Создать заказ"
                                 Command="{Binding CreateOrderCommand}"
@@ -57,14 +74,13 @@
                                 Foreground="White"
                                 BorderThickness="0"
                                 Padding="18,8"
+                                Margin="10,25,0,10"
                                 HorizontalAlignment="Left"/>
                     </StackPanel>
                 </Border>
 
-                <!-- ===== Существующий заказ ===== -->
                 <StackPanel Visibility="{Binding IsExistingOrder, Converter={StaticResource BoolToVisibility}}">
 
-                    <!-- Шапка заказа -->
                     <Border Style="{StaticResource ProductCardBorder}" Padding="20">
                         <StackPanel>
                             <TextBlock Text="{Binding SelectedClient}"
@@ -83,7 +99,6 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Состав заказа -->
                     <Border Style="{StaticResource ProductCardBorder}"
                             Padding="20" Margin="0,16,0,0">
                         <StackPanel>
@@ -91,7 +106,8 @@
                                        FontSize="18" FontWeight="SemiBold"
                                        Margin="0,0,0,12"/>
 
-                            <DataGrid ItemsSource="{Binding Items}"
+                            <DataGrid x:Name="OrdersGrid"
+                                      ItemsSource="{Binding Items}"
                                       AutoGenerateColumns="False"
                                       IsReadOnly="True"
                                       RowHeaderWidth="0"
@@ -135,7 +151,6 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Добавление товара (менеджер и админ) -->
                     <Border Style="{StaticResource ProductCardBorder}"
                             Padding="20" Margin="0,16,0,0"
                             Visibility="{Binding ShowAddPanel, Converter={StaticResource BoolToVisibility}}">

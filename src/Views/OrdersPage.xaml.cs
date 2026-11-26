@@ -24,10 +24,8 @@ namespace ShoesShop.Views
             Loaded += OnLoaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
+        private void OnLoaded(object sender, RoutedEventArgs e) =>
             _viewModel.Reload();
-        }
 
         private void TopBar_LoginRequested(object sender, EventArgs e) =>
             TopBarNavigation.HandleLogin(this, _session);
@@ -35,11 +33,8 @@ namespace ShoesShop.Views
         private void TopBar_LogoutRequested(object sender, EventArgs e) =>
             TopBarNavigation.HandleLogout(this, _session);
 
-        private void TopBar_OrdersRequested(object sender, EventArgs e)
-        {
-            // Уже на странице заказов — просто обновляем.
-            _viewModel.Reload();
-        }
+        private void TopBar_CatalogRequested(object sender, EventArgs e) =>
+            NavigationService.Navigate(new CatalogPage(_session));
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
@@ -52,24 +47,20 @@ namespace ShoesShop.Views
         private void Add_Click(object sender, RoutedEventArgs e) =>
             NavigationService.Navigate(new OrderEditorPage(0, _session));
 
-        private void Open_Click(object sender, RoutedEventArgs e)
+        private void OrderRow_EditRequested(object sender, RoutedEventArgs e)
         {
-            if (OrdersGrid.SelectedItem is OrderRowViewModel row)
+            if (sender is Controls.OrderActionsControl { DataContext: OrderRowViewModel row })
                 NavigationService.Navigate(new OrderEditorPage(row.Id, _session));
-            else
-                MessageBox.Show("Выберите заказ в списке.", "Заказ не выбран",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
-        private void Delete_Click(object sender, RoutedEventArgs e)
+        private void OrderRow_DeleteRequested(object sender, RoutedEventArgs e)
         {
-            if (OrdersGrid.SelectedItem is not OrderRowViewModel row)
-            {
-                MessageBox.Show("Выберите заказ в списке.", "Заказ не выбран",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+            if (sender is Controls.OrderActionsControl { DataContext: OrderRowViewModel row })
+                DeleteOrder(row);
+        }
 
+        private void DeleteOrder(OrderRowViewModel row)
+        {
             var result = MessageBox.Show(
                 $"Удалить заказ №{row.Id} от {row.Date:dd.MM.yyyy}?\n" +
                 "Все товарные позиции будут возвращены на склад.",

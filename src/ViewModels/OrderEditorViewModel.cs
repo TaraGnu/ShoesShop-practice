@@ -12,7 +12,6 @@ namespace ShoesShop.ViewModels
         private readonly UserSession _session;
         private int _orderId;
         private List<ShoeCardViewModel> _allProducts = new();
-
         public OrderEditorViewModel(int orderId, UserSession session)
         {
             _orderId = orderId;
@@ -85,6 +84,43 @@ namespace ShoesShop.ViewModels
             }
         }
 
+        public DateTime MinOrderDate => new(2000, 1, 1);
+        public DateTime MaxOrderDate => DateTime.Today.AddYears(1);
+
+        private bool ValidateOrderDate(DateTime? date)
+        {
+            if (date is null)
+            {
+                MessageBox.Show(
+                    "Укажите дату заказа.",
+                    "Дата не задана",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (date.Value < MinOrderDate)
+            {
+                MessageBox.Show(
+                    $"Дата заказа не может быть раньше {MinOrderDate:dd.MM.yyyy}.\n" +
+                    "Проверьте правильность ввода даты.",
+                    "Некорректная дата",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (date.Value > MaxOrderDate)
+            {
+                MessageBox.Show(
+                    $"Дата заказа не может быть позже {MaxOrderDate:dd.MM.yyyy}.\n" +
+                    "Проверьте правильность ввода даты.",
+                    "Некорректная дата",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            return true;
+        }
+
         private string _searchText = "";
         public string SearchText
         {
@@ -116,7 +152,7 @@ namespace ShoesShop.ViewModels
                     return;
 
                 OnPropertyChanged(nameof(MaxQuantity));
- 
+
                 Quantity = Math.Min(Quantity, MaxQuantity);
                 CommandManager.InvalidateRequerySuggested();
             }
@@ -216,9 +252,12 @@ namespace ShoesShop.ViewModels
                 return;
             }
 
+            if (!ValidateOrderDate(OrderDate))
+                return;
+
             _orderId = OrderManagementService.CreateEmptyOrder(
                 SelectedClient.Id,
-                OrderDate ?? DateTime.Now);
+                OrderDate!.Value);
 
             OnPropertyChanged(nameof(IsNewOrder));
             OnPropertyChanged(nameof(IsExistingOrder));

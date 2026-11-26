@@ -11,7 +11,7 @@ namespace ShoesShop.Service
             using var context = new ShoesContext();
             var productIdsWithOrders = GetProductIdsWithOrdersInPreviousMonth(context, calculationDate);
             var products = LoadProducts(context);
-            return BuildCards(products, productIdsWithOrders);
+            return products.Select(p => new ShoeCardViewModel(p, productIdsWithOrders.Contains(p.Id))).ToList();
         }
 
         private static List<Product> LoadProducts(ShoesContext context)
@@ -24,12 +24,6 @@ namespace ShoesShop.Service
                 .ToList();
         }
 
-        private static List<ShoeCardViewModel> BuildCards(IEnumerable<Product> products,HashSet<int> productIdsWithOrders)
-        {
-            return products
-                .Select(p => new ShoeCardViewModel(p, productIdsWithOrders.Contains(p.Id)))
-                .ToList();
-        }
 
         private static HashSet<int> GetProductIdsWithOrdersInPreviousMonth(ShoesContext context, DateTime calculationDate)
         {

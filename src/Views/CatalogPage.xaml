@@ -16,9 +16,11 @@
         <controls:TopBarControl Grid.Row="0"
                         x:Name="TopBar"
                         Title="Каталог обуви"
+                        ShowCatalogButton="False"
                         LoginRequested="TopBar_LoginRequested"
                         LogoutRequested="TopBar_LogoutRequested"
                         OrdersRequested="TopBar_OrdersRequested"/>
+        
         <Border Grid.Row="1" Padding="16,12">
             <Border.Style>
                 <Style TargetType="Border">
